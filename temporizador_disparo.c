@@ -3,8 +3,8 @@
 #include "pico/time.h"   // Biblioteca para gerenciamento de temporizadores e alarmes.
 
 const uint LED_PIN_BLUE = 11;    // Define o pino GPIO 11 para controlar o LED.
-const uint LED_PIN_RED = 12;    // Define o pino GPIO 11 para controlar o LED.
-const uint LED_PIN_GREEN = 13;    // Define o pino GPIO 11 para controlar o LED.
+const uint LED_PIN_RED = 12;    // Define o pino GPIO 12 para controlar o LED.
+const uint LED_PIN_GREEN = 13;    // Define o pino GPIO 13 para controlar o LED.
 const uint BUTTON_PIN = 5;  // Define o pino GPIO 5 para ler o estado do botão.
 
 bool led_active = false;    // Indica se o LED está atualmente aceso (para evitar múltiplas ativações).
@@ -16,8 +16,6 @@ int64_t turn_off_blue_callback(alarm_id_t id, void *user_data) {
     // Desliga o LED configurando o pino LED_PIN para nível baixo.
     gpio_put(LED_PIN_BLUE, false);
 
-    // Atualiza o estado de 'led_active' para falso, indicando que o LED está desligado.
-    led_active = false;
 
     // Retorna 0 para indicar que o alarme não deve se repetir.
     return 0;
@@ -28,23 +26,20 @@ int64_t turn_off_red_callback(alarm_id_t id, void *user_data) {
     // Desliga o LED configurando o pino LED_PIN para nível baixo.
     gpio_put(LED_PIN_RED, false);
 
-    // Atualiza o estado de 'led_active' para falso, indicando que o LED está desligado.
-    led_active = false;
-
     // Retorna 0 para indicar que o alarme não deve se repetir.
     return 0;
 }
 // Função de callback para desligar o LED após o tempo programado.
 int64_t turn_off_green_callback(alarm_id_t id, void *user_data) {
-
+   
     // Desliga o LED configurando o pino LED_PIN para nível baixo.
-    gpio_put(LED_PIN_GREEN, false);
-
-    // Atualiza o estado de 'led_active' para falso, indicando que o LED está desligado.
+    gpio_put(LED_PIN_GREEN, false); 
+    
+    // Atualiza o estado de 'led_active' para falso, indicando que todos os LEDs estão desligados.
     led_active = false;
-
+    
     // Retorna 0 para indicar que o alarme não deve se repetir.
-    return 0;
+    return 0; 
 }
 
 int main() {
@@ -56,11 +51,11 @@ int main() {
     gpio_init(LED_PIN_BLUE);
     gpio_set_dir(LED_PIN_BLUE, GPIO_OUT);
 
-    // Configura o pino LED_PIN (11) como saída digital.
+    // Configura o pino LED_PIN (12) como saída digital.
     gpio_init(LED_PIN_RED);
     gpio_set_dir(LED_PIN_RED, GPIO_OUT);
 
-    // Configura o pino LED_PIN (11) como saída digital.
+    // Configura o pino LED_PIN (13) como saída digital.
     gpio_init(LED_PIN_GREEN);
     gpio_set_dir(LED_PIN_GREEN, GPIO_OUT);
 
@@ -90,9 +85,10 @@ int main() {
                 led_active = true;
 
                 // Agenda um alarme para desligar o LED após 3 segundos (3000 ms).
-                // A função 'turn_off_callback' será chamada após esse tempo.
                 add_alarm_in_ms(3000, turn_off_blue_callback, NULL, false);
+                // Agenda um alarme para desligar o LED após 6 segundos (6000 ms).
                 add_alarm_in_ms(6000, turn_off_red_callback, NULL, false);
+                // Agenda um alarme para desligar o LED após 9 segundos (9000 ms).
                 add_alarm_in_ms(9000, turn_off_green_callback, NULL, false);
             }
         }
